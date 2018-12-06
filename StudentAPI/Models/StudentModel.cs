@@ -11,5 +11,8 @@ namespace StudentAPI.Models
         public StudentModel(DbContextOptions<StudentModel> options) : base(options) {
 
         }
+        //referene the student model for crud
+
+        public DbSet<Student> Students { get; set; }
     }
 }
