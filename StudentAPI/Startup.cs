@@ -32,6 +32,7 @@ namespace StudentAPI
             //db connection options
             string db = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<StudentModel>(options => options.UseSqlServer(db));
+            services.AddDbContext<OrderModel>(options => options.UseSqlServer(db));
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

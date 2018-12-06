@@ -13,30 +13,45 @@ namespace StudentAPI.Controllers
     [ApiController]
     public class StudentsController : ControllerBase
     {
-        private readonly StudentModel _context;
+        private  StudentModel db;
+        
 
         public StudentsController(StudentModel context)
         {
-            _context = context;
-        }
+           this.db = db;
+        }   
 
         // GET: api/Students
         [HttpGet]
         public IEnumerable<Student> GetStudents()
         {
-            return _context.Students;
+            return db.Students.OrderBy(a => a.FirstName).ToList();
         }
 
-        // GET: api/Students/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetStudent([FromRoute] int id)
+
+        //Get:api/Students
+        [HttpGet]
+        public ActionResult Get(int id)
+        {
+            Student student = db.Students.Find(id);
+
+            if (student == null)
+            {
+                return NotFound();
+            }
+            return Ok(student);
+        }
+
+        // GET: api/Students/5 
+        [HttpPost("{id}")]
+        public async Task<Microsoft.AspNetCore.Mvc.IActionResult> GetStudent([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var student = await _context.Students.FindAsync(id);
+            var student = await db.Students.FindAsync(id);
 
             if (student == null)
             {
@@ -48,7 +63,7 @@ namespace StudentAPI.Controllers
 
         // PUT: api/Students/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStudent([FromRoute] int id, [FromBody] Student student)
+        public async Task<Microsoft.AspNetCore.Mvc.IActionResult> PutStudent([FromRoute] int id, [FromBody] Student student)
         {
             if (!ModelState.IsValid)
             {
@@ -60,11 +75,11 @@ namespace StudentAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(student).State = EntityState.Modified;
+            db.Entry(student).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -83,43 +98,43 @@ namespace StudentAPI.Controllers
 
         // POST: api/Students
         [HttpPost]
-        public async Task<IActionResult> PostStudent([FromBody] Student student)
+        public async Task<Microsoft.AspNetCore.Mvc.IActionResult> PostStudent([FromBody] Student student)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Students.Add(student);
-            await _context.SaveChangesAsync();
+            db.Students.Add(student);
+            await db.SaveChangesAsync();
 
             return CreatedAtAction("GetStudent", new { id = student.StudentId }, student);
         }
 
         // DELETE: api/Students/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStudent([FromRoute] int id)
+        public async Task<Microsoft.AspNetCore.Mvc.IActionResult> DeleteStudent([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var student = await _context.Students.FindAsync(id);
+            var student = await db.Students.FindAsync(id);
             if (student == null)
             {
                 return NotFound();
             }
 
-            _context.Students.Remove(student);
-            await _context.SaveChangesAsync();
+            db.Students.Remove(student);
+            await db.SaveChangesAsync();
 
             return Ok(student);
         }
 
         private bool StudentExists(int id)
         {
-            return _context.Students.Any(e => e.StudentId == id);
+            return db.Students.Any(e => e.StudentId == id);
         }
     }
 }
